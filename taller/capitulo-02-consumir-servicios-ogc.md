@@ -76,6 +76,7 @@ Con el nombre de capa que leíste, construye la URL a mano (WMS 1.1.1, `bbox = m
 https://geoportal.dane.gov.co/mparcgis/services/MGN2024/Serv_CapasMGN_2024/MapServer/WMSServer?
   service=WMS&version=1.1.1&request=GetMap
   &layers=0
+  &styles=                         (obligatorio; vacío = estilo por defecto)
   &srs=EPSG:4326
   &bbox=-74.5,5.1,-72.0,6.9        (aprox. Boyacá)
   &width=800&height=600
@@ -84,11 +85,13 @@ https://geoportal.dane.gov.co/mparcgis/services/MGN2024/Serv_CapasMGN_2024/MapSe
 
 Pégala en el navegador: deberías ver la imagen. Cambia el `bbox`, el `width/height` o el `format` y observa el efecto.
 
+> **Si obtienes un XML `StylesNotDefined` en lugar de la imagen**, faltó el parámetro `styles`. En WMS **1.1.1 es obligatorio**: déjalo **vacío** (`&styles=`) para usar el estilo por defecto, o indica uno del `GetCapabilities` (estas capas traen `default`, así que también sirve `&styles=default`). La respuesta de error es, además, un buen ejemplo de un `ServiceExceptionReport` de OGC.
+
 > **Ojo con el orden de ejes.** En WMS **1.1.1** el `bbox` va `minx,miny,maxx,maxy` (lon,lat). En **1.3.0** con `EPSG:4326` el orden es lat,lon. Si el mapa "sale en blanco" o corrido, casi siempre es el orden de ejes o un CRS no soportado.
 
 ### GetFeatureInfo — consultar un punto
 
-Añade `request=GetFeatureInfo`, `query_layers`, `info_format=text/html` y la posición del píxel (`x`,`y` o `i`,`j`) para obtener los atributos del objeto bajo ese punto.
+Parte de la misma petición `GetMap` (incluido `styles=`) y añade `request=GetFeatureInfo`, `query_layers`, `info_format=text/html` y la posición del píxel (`x`,`y` o `i`,`j`) para obtener los atributos del objeto bajo ese punto.
 
 ### En QGIS
 
