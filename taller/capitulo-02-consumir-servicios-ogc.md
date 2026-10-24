@@ -63,7 +63,7 @@ https://geoportal.dane.gov.co/mparcgis/services/MGN2024/Serv_CapasMGN_2024/MapSe
 ```
 
 En el XML busca:
-- `<Layer>` — las **capas** disponibles (anota su `<Name>`, p. ej. `0`, `1`, …).
+- `<Layer>` — las **capas** disponibles. En este servicio del DANE son niveles administrativos numerados **por detalle**: `0` = **Manzana** (la más detallada) … `7` = **Municipio**, `8` = **Departamento**, `9` = **País**. Anota el `<Name>` de la que quieras dibujar.
 - `<CRS>` / `<SRS>` — los **sistemas de coordenadas** soportados (p. ej. `EPSG:4326`).
 - `<Format>` — los **formatos** de salida (`image/png`, `image/jpeg`).
 - `<Style>` — los estilos disponibles.
@@ -75,7 +75,7 @@ Con el nombre de capa que leíste, construye la URL a mano (WMS 1.1.1, `bbox = m
 ```
 https://geoportal.dane.gov.co/mparcgis/services/MGN2024/Serv_CapasMGN_2024/MapServer/WMSServer?
   service=WMS&version=1.1.1&request=GetMap
-  &layers=0
+  &layers=8                        (8 = Departamento; ver la lista de capas arriba)
   &styles=                         (obligatorio; vacío = estilo por defecto)
   &srs=EPSG:4326
   &bbox=-74.5,5.1,-72.0,6.9        (aprox. Boyacá)
@@ -87,7 +87,9 @@ Pégala en el navegador: deberías ver la imagen. Cambia el `bbox`, el `width/he
 
 > **Si obtienes un XML `StylesNotDefined` en lugar de la imagen**, faltó el parámetro `styles`. En WMS **1.1.1 es obligatorio**: déjalo **vacío** (`&styles=`) para usar el estilo por defecto, o indica uno del `GetCapabilities` (estas capas traen `default`, así que también sirve `&styles=default`). La respuesta de error es, además, un buen ejemplo de un `ServiceExceptionReport` de OGC.
 
-> **Ojo con el orden de ejes.** En WMS **1.1.1** el `bbox` va `minx,miny,maxx,maxy` (lon,lat). En **1.3.0** con `EPSG:4326` el orden es lat,lon. Si el mapa "sale en blanco" o corrido, casi siempre es el orden de ejes o un CRS no soportado.
+> **¿Mapa en blanco?** La causa más común es elegir una capa **demasiado detallada** para el extent. La capa `0` (Manzana) no se ve a escala departamental; para un área grande como Boyacá usa `layers=8` (Departamento) o `layers=9` (País). Las capas detalladas solo aparecen al acercar mucho el `bbox`.
+
+> **Ojo con el orden de ejes.** En WMS **1.1.1** el `bbox` va `minx,miny,maxx,maxy` (lon,lat). En **1.3.0** con `EPSG:4326` el orden es lat,lon. Si el mapa sale corrido o vacío, revisa también el orden de ejes o un CRS no soportado.
 
 ### GetFeatureInfo — consultar un punto
 
