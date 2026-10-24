@@ -1,0 +1,18 @@
+# Datos de Boyacá generados por scripts/descargar_boyaca.py (no versionar)
+nivelacion/datos/*.geojson
+nivelacion/datos/*.shp
+nivelacion/datos/*.dbf
+nivelacion/datos/*.shx
+nivelacion/datos/*.prj
+nivelacion/datos/*.cpg
+
+# Entornos y dependencias
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Credenciales y temporales
+.env
+*.log
