@@ -106,14 +106,15 @@ El WFS devuelve **geometrías y atributos** (no imágenes): puedes descargarlos 
 ### Las tres operaciones
 
 ```
-# 1) Menú del servicio
+# 1) Menú del servicio -> lista los typeNames (capas), p. ej.
+#    Serv_CapasMGN_2024:Departamento , Serv_CapasMGN_2024:Municipio
 .../WFSServer?service=WFS&version=2.0.0&request=GetCapabilities
 
 # 2) Esquema de una capa (campos y tipos)
-.../WFSServer?service=WFS&version=2.0.0&request=DescribeFeatureType&typeNames=<capa>
+.../WFSServer?service=WFS&version=2.0.0&request=DescribeFeatureType&typeNames=Serv_CapasMGN_2024:Departamento
 
-# 3) Descargar features
-.../WFSServer?service=WFS&version=2.0.0&request=GetFeature&typeNames=<capa>&count=5
+# 3) Descargar 5 features en GeoJSON
+.../WFSServer?service=WFS&version=2.0.0&request=GetFeature&typeNames=Serv_CapasMGN_2024:Departamento&count=5&outputFormat=GEOJSON
 ```
 
 Punto de entrada WFS del DANE:
@@ -125,21 +126,21 @@ https://geoportal.dane.gov.co/mparcgis/services/MGN2024/Serv_CapasMGN_2024/MapSe
 Parámetros útiles de `GetFeature`:
 - `typeNames` — la capa (del `GetCapabilities`).
 - `count` y `startIndex` — **paginación**.
-- `outputFormat` — `GML` (siempre) o `application/json` / `GEOJSON` si el servidor lo ofrece.
+- `outputFormat` — `GML` (siempre) o `GEOJSON` si el servidor lo ofrece. El WFS del DANE **sí ofrece `GEOJSON`**; otros servidores pueden exponer solo GML (míralo en el `GetCapabilities`).
 - `bbox` o `CQL_FILTER` — filtros espacial y por atributos.
 
 ### Desde la línea de comandos y Python
 
 ```bash
-# Guardar la respuesta en un archivo
-curl -s "https://.../WFSServer?service=WFS&version=2.0.0&request=GetFeature&typeNames=<capa>&count=5&outputFormat=GEOJSON" -o salida.geojson
+# Guardar la respuesta en un archivo (base del WFS del DANE)
+curl -s "https://geoportal.dane.gov.co/mparcgis/services/MGN2024/Serv_CapasMGN_2024/MapServer/WFSServer?service=WFS&version=2.0.0&request=GetFeature&typeNames=Serv_CapasMGN_2024:Departamento&count=5&outputFormat=GEOJSON" -o departamentos.geojson
 ```
 
 ```python
 import requests
-url = "https://.../WFSServer"
+url = "https://geoportal.dane.gov.co/mparcgis/services/MGN2024/Serv_CapasMGN_2024/MapServer/WFSServer"
 params = {"service":"WFS","version":"2.0.0","request":"GetFeature",
-          "typeNames":"<capa>","count":10,"outputFormat":"GEOJSON"}
+          "typeNames":"Serv_CapasMGN_2024:Departamento","count":10,"outputFormat":"GEOJSON"}
 r = requests.get(url, params=params, timeout=30)
 geo = r.json()
 print(len(geo["features"]), "features")
