@@ -1,4 +1,4 @@
-# Capítulo 8: Aplicación Web con Leaflet
+# Capítulo 9: Aplicación Web con Leaflet
 
 ## Objetivos del Capítulo
 
@@ -11,7 +11,7 @@
 - Implementar controles y leyendas
 - Desplegar la aplicación
 
-## 8.1 ¿Qué es Leaflet?
+## 9.1 ¿Qué es Leaflet?
 
 ### Introducción
 
@@ -45,7 +45,7 @@
 - Necesitas control total del diseño
 - Proyecto de código abierto
 
-## 8.2 Configuración del Proyecto
+## 9.2 Configuración del Proyecto
 
 ### Estructura de Archivos
 
@@ -94,7 +94,7 @@ mkdir -p webapp/css webapp/js webapp/assets/images
 <script src="libs/leaflet/leaflet.js"></script>
 ```
 
-## 8.3 Crear el Mapa Básico
+## 9.3 Crear el Mapa Básico
 
 ### HTML Base (index.html)
 
@@ -168,7 +168,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 1. Abre `index.html` en un navegador
 2. Deberías ver un mapa de OpenStreetMap centrado en Colombia
 
-## 8.4 Consumir WMS de GeoServer
+## 9.4 Consumir WMS de GeoServer
 
 ### Agregar Capa WMS
 
@@ -221,7 +221,7 @@ L.control.layers(baseMaps, overlayMaps, {
 baseMaps["OpenStreetMap"].addTo(map);
 ```
 
-## 8.5 Consumir WFS de GeoServer
+## 9.5 Consumir WFS de GeoServer
 
 ### Cargar Datos GeoJSON desde WFS
 
@@ -331,7 +331,7 @@ const departamentosGeoJSON = L.geoJSON(data, {
 }).addTo(map);
 ```
 
-## 8.6 Agregar Controles Personalizados
+## 9.6 Agregar Controles Personalizados
 
 ### Panel de Información
 
@@ -414,7 +414,7 @@ L.control.scale({
 }).addTo(map);
 ```
 
-## 8.7 Búsqueda y Filtros
+## 9.7 Búsqueda y Filtros
 
 ### Búsqueda por Nombre
 
@@ -481,7 +481,7 @@ function loadDepartamentosByCQL(filter) {
 loadDepartamentosByCQL("dpto_ccdgo='25'"); // Solo Cundinamarca
 ```
 
-## 8.8 Marcadores y Popups
+## 9.8 Marcadores y Popups
 
 ### Agregar Marcador
 
@@ -520,7 +520,7 @@ const popupContent = `
 layer.bindPopup(popupContent);
 ```
 
-## 8.9 Ejemplo Completo: Aplicación del Curso
+## 9.9 Ejemplo Completo: Aplicación del Curso
 
 ### index.html
 
@@ -691,7 +691,7 @@ layer.bindPopup(popupContent);
 </html>
 ```
 
-## 8.10 Despliegue
+## 9.10 Despliegue
 
 ### Servidor Local
 
@@ -789,7 +789,7 @@ En este capítulo has aprendido:
 
 ---
 
-**Capítulo anterior**: [Capítulo 7: Publicación de Capas en GeoServer](./capitulo-07-publicacion-geoserver.md)
+**Capítulo anterior**: [Capítulo 8: Publicación de Capas en GeoServer](./capitulo-08-publicacion-geoserver.md)
 
 **¡Felicitaciones!** Has completado el curso de Servicios Web Geográficos.
 

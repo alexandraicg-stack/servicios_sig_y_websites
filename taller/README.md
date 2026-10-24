@@ -22,48 +22,51 @@ Aprender a configurar, administrar y consumir servicios web geográficos utiliza
 - Comandos básicos de Git
 - Clonación de este repositorio
 
-### [Capítulo 2: Instalación de PostgreSQL y PostGIS](./capitulo-02-postgresql-postgis.md)
+### [Capítulo 2: Explorar y consumir servicios OGC existentes](./capitulo-02-consumir-servicios-ogc.md)
+- Consumir servicios reales sin instalar nada
+- Operaciones WMS: GetCapabilities, GetMap, GetFeatureInfo
+- Operaciones WFS: GetFeature, filtros, GeoJSON
+- Teselas WMTS y esquema XYZ
+- Navegador, QGIS y línea de comandos
+
+### [Capítulo 3: Instalación de PostgreSQL y PostGIS con Docker](./capitulo-03-postgresql-postgis.md)
 - ¿Qué es PostgreSQL?
 - ¿Qué es PostGIS?
-- Instalación en Windows
-- Configuración inicial
-- Creación de base de datos espacial
+- Levantar PostGIS con Docker
+- Verificación de la base de datos espacial
 
-### [Capítulo 3: Instalación y Configuración de GeoServer](./capitulo-03-geoserver.md)
+### [Capítulo 4: Instalación y Configuración de GeoServer con Docker](./capitulo-04-geoserver.md)
 - ¿Qué es GeoServer?
-- Requisitos del sistema
-- Instalación en Windows
-- Configuración inicial
+- Levantar GeoServer con Docker
 - Interfaz de administración
 
-### [Capítulo 4: Servicios Web Geográficos](./capitulo-04-servicios-web-geograficos.md)
+### [Capítulo 5: Servicios Web Geográficos](./capitulo-05-servicios-web-geograficos.md)
 - Estándares OGC
 - Web Map Service (WMS)
 - Web Feature Service (WFS)
 - Diferencias y casos de uso
 - Parámetros y peticiones
 
-### [Capítulo 5: Estándares para Información Geográfica](./capitulo-05-estandares-geograficos.md)
+### [Capítulo 6: Estándares para Información Geográfica](./capitulo-06-estandares-geograficos.md)
 - GeoJSON: Formato de intercambio
 - SLD (Styled Layer Descriptor): Estilos para capas
 - Otros formatos relevantes
 - Ejemplos prácticos
 
-### [Capítulo 6: Carga de Datos a PostgreSQL](./capitulo-06-carga-datos-postgresql.md)
-- Herramientas para carga de datos
-- Uso de shp2pgsql
-- Uso de ogr2ogr
+### [Capítulo 7: Carga de Datos a PostgreSQL](./capitulo-07-carga-datos-postgresql.md)
+- Herramientas para carga de datos (en el contenedor)
+- Uso de shp2pgsql y ogr2ogr
 - Carga de shapefiles de departamentos y municipios
 - Verificación de datos
 
-### [Capítulo 7: Publicación de Capas en GeoServer](./capitulo-07-publicacion-geoserver.md)
+### [Capítulo 8: Publicación de Capas en GeoServer](./capitulo-08-publicacion-geoserver.md)
 - Creación de espacios de trabajo
-- Configuración de almacenes de datos
+- Configuración de almacenes de datos (host `postgis`)
 - Publicación de capas desde PostgreSQL
 - Aplicación de estilos SLD
-- Configuración de servicios WMS y WFS
+- Servicios WMS y WFS, y WMTS con GeoWebCache
 
-### [Capítulo 8: Aplicación Web con Leaflet](./capitulo-08-aplicacion-leaflet.md)
+### [Capítulo 9: Aplicación Web con Leaflet](./capitulo-09-aplicacion-leaflet.md)
 - Introducción a Leaflet
 - Configuración del proyecto
 - Consumo de servicios WMS
@@ -90,15 +93,16 @@ servicios_sig_y_websites/
 │   ├── municipios.shp             # Shapefile de municipios
 │   ├── municipios.geojson         # GeoJSON de municipios
 │   └── municipios.sld             # Estilo para municipios
-├── curso/                        # Documentación del curso
+├── taller/                        # Documentación del curso
 │   ├── capitulo-01-git.md
-│   ├── capitulo-02-postgresql-postgis.md
-│   ├── capitulo-03-geoserver.md
-│   ├── capitulo-04-servicios-web-geograficos.md
-│   ├── capitulo-05-estandares-geograficos.md
-│   ├── capitulo-06-carga-datos-postgresql.md
-│   ├── capitulo-07-publicacion-geoserver.md
-│   └── capitulo-08-aplicacion-leaflet.md
+│   ├── capitulo-02-consumir-servicios-ogc.md
+│   ├── capitulo-03-postgresql-postgis.md
+│   ├── capitulo-04-geoserver.md
+│   ├── capitulo-05-servicios-web-geograficos.md
+│   ├── capitulo-06-estandares-geograficos.md
+│   ├── capitulo-07-carga-datos-postgresql.md
+│   ├── capitulo-08-publicacion-geoserver.md
+│   └── capitulo-09-aplicacion-leaflet.md
 └── webapp/                        # Aplicación web de ejemplo
     └── index.html
 ```

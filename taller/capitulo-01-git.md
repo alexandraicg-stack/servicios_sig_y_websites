@@ -373,4 +373,4 @@ En este capítulo has aprendido:
 
 ---
 
-**Próximo capítulo**: [Capítulo 2: Instalación de PostgreSQL y PostGIS](./capitulo-02-postgresql-postgis.md)
+**Próximo capítulo**: [Capítulo 2: Explorar y consumir servicios OGC existentes](./capitulo-02-consumir-servicios-ogc.md)

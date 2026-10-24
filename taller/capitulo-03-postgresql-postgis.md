@@ -1,4 +1,4 @@
-# Capítulo 2: Instalación de PostgreSQL y PostGIS
+# Capítulo 3: Instalación de PostgreSQL y PostGIS
 
 ## Objetivos del Capítulo
 
@@ -10,7 +10,7 @@
 
 > Este capítulo usa **Docker** como método principal. Si no puedes usar Docker en tu equipo, al final encontrarás el **Anexo A — Instalación nativa (opcional)**.
 
-## 2.1 ¿Qué es PostgreSQL?
+## 3.1 ¿Qué es PostgreSQL?
 
 **PostgreSQL** es un sistema de gestión de bases de datos relacional (RDBMS) de código abierto:
 
@@ -30,7 +30,7 @@
 - **Soporte para datos espaciales mediante PostGIS**
 - **Amplia adopción en la industria**
 
-## 2.2 ¿Qué es PostGIS?
+## 3.2 ¿Qué es PostGIS?
 
 **PostGIS** es una extensión espacial para PostgreSQL que añade soporte para:
 
@@ -50,7 +50,7 @@
 | Topología | Relaciones topológicas complejas |
 | 3D | Soporte para geometrías tridimensionales |
 
-## 2.3 Levantar PostgreSQL + PostGIS con Docker
+## 3.3 Levantar PostgreSQL + PostGIS con Docker
 
 En lugar de instalar PostgreSQL y PostGIS directamente en el sistema operativo, el curso usa **Docker**: una imagen oficial ya trae PostgreSQL y PostGIS listos y la base de datos del curso se crea sola. Así todos trabajamos con la misma versión y evitamos problemas de instalación.
 
@@ -102,7 +102,7 @@ docker compose up -d    # los vuelve a levantar
 
 Los datos **se conservan** en el volumen `pgdata` entre reinicios. Para borrar todo y empezar de cero: `docker compose down -v` (elimina también los volúmenes).
 
-## 2.5 La Base de Datos del Curso
+## 3.5 La Base de Datos del Curso
 
 Con Docker **no tienes que crear la base**: el contenedor ya levantó `taller_gis` con PostGIS habilitado. Esta sección es para **verificarla** y, si lo necesitas, crear bases adicionales.
 
@@ -153,7 +153,7 @@ CREATE DATABASE mi_otra_base;
 CREATE EXTENSION postgis;
 ```
 
-## 2.6 Herramientas de Administración
+## 3.6 Herramientas de Administración
 
 ### pgAdmin 4
 
@@ -218,7 +218,7 @@ SELECT PostGIS_version();
 \q
 ```
 
-## 2.7 Consultas Espaciales Básicas
+## 3.7 Consultas Espaciales Básicas
 
 > Ejecuta el SQL de esta sección (y las siguientes 2.8 y 2.9) dentro de una sesión `psql` del contenedor: `docker exec -it curso_postgis psql -U postgres -d taller_gis`, o pégalo en el Query Tool de pgAdmin conectado a `localhost:5432`.
 
@@ -306,7 +306,7 @@ WHERE nombre = 'Bogotá';
 | `ST_AsText(geom)` | Convierte geometría a WKT |
 | `ST_AsGeoJSON(geom)` | Convierte geometría a GeoJSON |
 
-## 2.8 Sistemas de Referencia Espacial (SRID)
+## 3.8 Sistemas de Referencia Espacial (SRID)
 
 ### ¿Qué es un SRID?
 
@@ -336,7 +336,7 @@ SELECT
 FROM ciudades;
 ```
 
-## 2.9 Índices Espaciales
+## 3.9 Índices Espaciales
 
 Los índices espaciales mejoran significativamente el rendimiento de consultas espaciales.
 
@@ -417,6 +417,6 @@ Si **no puedes usar Docker**, puedes instalar PostgreSQL y PostGIS directamente 
 
 ---
 
-**Capítulo anterior**: [Capítulo 1: Introducción a Git](./capitulo-01-git.md)
+**Capítulo anterior**: [Capítulo 2: Explorar y consumir servicios OGC existentes](./capitulo-02-consumir-servicios-ogc.md)
 
-**Próximo capítulo**: [Capítulo 3: Instalación y Configuración de GeoServer](./capitulo-03-geoserver.md)
+**Próximo capítulo**: [Capítulo 4: Instalación y Configuración de GeoServer](./capitulo-04-geoserver.md)

@@ -1,4 +1,4 @@
-# Capítulo 3: Instalación y Configuración de GeoServer
+# Capítulo 4: Instalación y Configuración de GeoServer
 
 ## Objetivos del Capítulo
 
@@ -8,7 +8,7 @@
 - Conocer dónde viven los datos y los logs cuando corre en contenedor
 - (Opcional) Instalar GeoServer de forma nativa
 
-## 3.1 ¿Qué es GeoServer?
+## 4.1 ¿Qué es GeoServer?
 
 **GeoServer** es un servidor de código abierto para compartir datos geoespaciales:
 
@@ -40,7 +40,7 @@
 - - **Integración con PostGIS** y otras bases de datos
 - - **Alto rendimiento** y escalabilidad
 
-## 3.2 Levantar GeoServer con Docker
+## 4.2 Levantar GeoServer con Docker
 
 La forma recomendada en este curso es con **Docker**. La imagen oficial ya trae Java y el servidor configurado: **no hay que instalar Java, ni descargar/extraer binarios, ni usar nssm**.
 
@@ -90,9 +90,9 @@ Los datos de GeoServer **se conservan** entre reinicios porque viven en el volum
 - **Puerto 8080 ocupado:** edita el mapeo de puertos del servicio `geoserver` en `docker-compose.yml`, por ejemplo `"8081:8080"`, vuelve a ejecutar `docker compose up -d` y entra en [http://localhost:8081/geoserver](http://localhost:8081/geoserver).
 - **El contenedor no inicia:** revisa `docker compose logs geoserver`.
 
-> **Importante para el Capítulo 7.** Cuando GeoServer corre en Docker y creas el *Store* de PostGIS, el **host NO es `localhost`** sino **`postgis`** (el nombre del servicio en `docker-compose.yml`), con puerto `5432`, base de datos `taller_gis` y usuario/clave `postgres`/`postgres`. Ambos contenedores comparten la red de Docker Compose y se ven entre sí por su nombre de servicio.
+> **Importante para el Capítulo 8.** Cuando GeoServer corre en Docker y creas el *Store* de PostGIS, el **host NO es `localhost`** sino **`postgis`** (el nombre del servicio en `docker-compose.yml`), con puerto `5432`, base de datos `taller_gis` y usuario/clave `postgres`/`postgres`. Ambos contenedores comparten la red de Docker Compose y se ven entre sí por su nombre de servicio.
 
-## 3.5 Interfaz de Administración
+## 4.5 Interfaz de Administración
 
 ### Acceso a la Interfaz
 
@@ -133,7 +133,7 @@ Administración de datos geoespaciales:
 - **Layer Groups**: Grupos de capas
 - **Styles**: Estilos SLD/CSS
 
-#### 3. Services
+#### 4. Services
 
 Configuración de servicios OGC:
 
@@ -198,7 +198,7 @@ Herramientas de demostración:
 - **Contact Person**: Tu nombre
 - **Contact Email**: tu@email.com
 
-#### 3. Configuración de Servicios
+#### 4. Configuración de Servicios
 
 **Services** → **WMS**:
 
@@ -214,7 +214,7 @@ Herramientas de demostración:
 - **Maximum number of features**: `1000000`
 - **Maximum number of decimals**: `8`
 
-## 3.6 Vista Previa de Capas
+## 4.6 Vista Previa de Capas
 
 GeoServer incluye capas de demostración.
 
@@ -260,7 +260,7 @@ http://localhost:8080/geoserver/wms?
   format=image/png
 ```
 
-## 3.7 Estructura de Directorios
+## 4.7 Estructura de Directorios
 
 ### Directorio de Datos (data_dir)
 
@@ -296,7 +296,7 @@ data_dir/
 - `wms.xml`: Configuración del servicio WMS
 - `wfs.xml`: Configuración del servicio WFS
 
-## 3.8 Monitoreo y Logs
+## 4.8 Monitoreo y Logs
 
 ### Ver el Estado del Servidor
 
@@ -338,7 +338,7 @@ El archivo de log también existe dentro del contenedor, en el `data_dir`:
 docker exec -it curso_geoserver cat /opt/geoserver_data/logs/geoserver.log
 ```
 
-## 3.9 Mejores Prácticas
+## 4.9 Mejores Prácticas
 
 ### Desarrollo
 
@@ -407,7 +407,7 @@ Solo si **no** puedes usar Docker. Con Docker nada de esto es necesario.
 - **"Java not found":** revisa `java -version` y `echo %JAVA_HOME%`, y reinicia la terminal.
 - **Logs:** `C:\Program Files\GeoServer\logs\geoserver.log`.
 
-> En la instalación nativa, GeoServer y PostgreSQL corren en el mismo equipo, así que el host del Store de PostGIS en el Capítulo 7 **sí** sería `localhost`.
+> En la instalación nativa, GeoServer y PostgreSQL corren en el mismo equipo, así que el host del Store de PostGIS en el Capítulo 8 **sí** sería `localhost`.
 
 ## Referencias
 
@@ -420,6 +420,6 @@ Solo si **no** puedes usar Docker. Con Docker nada de esto es necesario.
 
 ---
 
-**Capítulo anterior**: [Capítulo 2: Instalación de PostgreSQL y PostGIS](./capitulo-02-postgresql-postgis.md)
+**Capítulo anterior**: [Capítulo 3: Instalación de PostgreSQL y PostGIS](./capitulo-03-postgresql-postgis.md)
 
-**Próximo capítulo**: [Capítulo 4: Servicios Web Geográficos](./capitulo-04-servicios-web-geograficos.md)
+**Próximo capítulo**: [Capítulo 5: Servicios Web Geográficos](./capitulo-05-servicios-web-geograficos.md)

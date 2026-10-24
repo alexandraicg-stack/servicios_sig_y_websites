@@ -1,4 +1,4 @@
-# Capítulo 6: Carga de Datos a PostgreSQL
+# Capítulo 7: Carga de Datos a PostgreSQL
 
 ## Objetivos del Capítulo
 
@@ -10,9 +10,9 @@
 - Crear índices espaciales
 - Optimizar el rendimiento
 
-> Este capítulo asume que ya levantaste el stack con `docker compose up -d` (Capítulo 2). El contenedor de base de datos se llama **`curso_postgis`**, la base es **`taller_gis`** (usuario/clave `postgres`/`postgres`) y la carpeta `./data` del repositorio está disponible **dentro del contenedor en `/data`**.
+> Este capítulo asume que ya levantaste el stack con `docker compose up -d` (Capítulo 3). El contenedor de base de datos se llama **`curso_postgis`**, la base es **`taller_gis`** (usuario/clave `postgres`/`postgres`) y la carpeta `./data` del repositorio está disponible **dentro del contenedor en `/data`**.
 
-## 6.1 Herramientas de Carga de Datos
+## 7.1 Herramientas de Carga de Datos
 
 ### Herramientas Disponibles
 
@@ -31,7 +31,7 @@
 - **QGIS**: Para usuarios que prefieren GUI
 - **psql**: Para datos sin geometría
 
-## 6.2 Usando shp2pgsql
+## 7.2 Usando shp2pgsql
 
 ### ¿Qué es shp2pgsql?
 
@@ -140,7 +140,7 @@ docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -d /data/departament
 UPDATE departamentos SET geom = ST_MakeValid(geom) WHERE NOT ST_IsValid(geom);
 ```
 
-## 6.3 Usando ogr2ogr (GDAL/OGR)
+## 7.3 Usando ogr2ogr (GDAL/OGR)
 
 ### ¿Qué es ogr2ogr?
 
@@ -242,7 +242,7 @@ ogr2ogr -f "PostgreSQL" PG:"dbname=taller_gis user=postgres" datos.gpkg -overwri
 - Conversión entre formatos
 - Multiplataforma
 
-## 6.4 Cargar Datos del Curso
+## 7.4 Cargar Datos del Curso
 
 ### Preparación
 
@@ -323,7 +323,7 @@ Sin GDAL en el host, usa el **contenedor GDAL efímero** (ver §6.3, forma b) ca
    - - **Convert field names to lowercase**
 9. Haz clic en **OK**
 
-## 6.5 Verificar Datos Cargados
+## 7.5 Verificar Datos Cargados
 
 ### Conectarse a la Base de Datos
 
@@ -441,7 +441,7 @@ SELECT * FROM geometry_columns
 WHERE f_table_name IN ('departamentos', 'municipios');
 ```
 
-## 6.6 Crear Índices Espaciales
+## 7.6 Crear Índices Espaciales
 
 ### ¿Por Qué Índices Espaciales?
 
@@ -492,7 +492,7 @@ WHERE ST_Intersects(geom, ST_MakePoint(-74.0, 4.0));
 -- El plan de ejecución mostrará "Index Scan using idx_municipios_geom"
 ```
 
-## 6.7 Consultas de Verificación
+## 7.7 Consultas de Verificación
 
 ### Departamentos
 
@@ -560,7 +560,7 @@ JOIN departamentos d2 ON ST_Touches(d1.geom, d2.geom)
 WHERE d1.dpto_cnmbr = 'Cundinamarca';
 ```
 
-## 6.8 Optimización y Mantenimiento
+## 7.8 Optimización y Mantenimiento
 
 ### Actualizar Estadísticas
 
@@ -593,7 +593,7 @@ WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 ```
 
-## 6.9 Exportar Datos desde PostgreSQL
+## 7.9 Exportar Datos desde PostgreSQL
 
 ### Exportar a Shapefile
 
@@ -636,7 +636,7 @@ COPY (
 
 ## Nota — Instalación nativa (opcional)
 
-Si instalaste PostgreSQL/PostGIS de forma nativa (Anexo A del Capítulo 2) en lugar de Docker:
+Si instalaste PostgreSQL/PostGIS de forma nativa (Anexo A del Capítulo 3) en lugar de Docker:
 
 - `shp2pgsql`, `pgsql2shp` y `psql` están en `C:\Program Files\PostgreSQL\16\bin` (agrégalo al `PATH`). No uses `docker exec`: ejecuta los comandos directamente y apunta a la ruta local del shapefile. Ejemplo:
   ```bash
@@ -682,6 +682,6 @@ En este capítulo has aprendido:
 
 ---
 
-**Capítulo anterior**: [Capítulo 5: Estándares para Información Geográfica](./capitulo-05-estandares-geograficos.md)
+**Capítulo anterior**: [Capítulo 6: Estándares para Información Geográfica](./capitulo-06-estandares-geograficos.md)
 
-**Próximo capítulo**: [Capítulo 7: Publicación de Capas en GeoServer](./capitulo-07-publicacion-geoserver.md)
+**Próximo capítulo**: [Capítulo 8: Publicación de Capas en GeoServer](./capitulo-08-publicacion-geoserver.md)

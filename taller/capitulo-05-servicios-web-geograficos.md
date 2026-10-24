@@ -1,4 +1,4 @@
-# Capítulo 4: Servicios Web Geográficos
+# Capítulo 5: Servicios Web Geográficos
 
 ## Objetivos del Capítulo
 
@@ -10,7 +10,7 @@
 - Aprender a construir peticiones HTTP para cada servicio
 - Explorar otros servicios OGC
 
-## 4.1 ¿Qué es OGC?
+## 5.1 ¿Qué es OGC?
 
 ### Open Geospatial Consortium
 
@@ -42,7 +42,7 @@
 - **SLD**: Styled Layer Descriptor (estilos)
 - **GML**: Geography Markup Language (formato XML)
 
-## 4.2 Arquitectura de Servicios Web Geográficos
+## 5.2 Arquitectura de Servicios Web Geográficos
 
 ### Modelo Cliente-Servidor
 
@@ -65,7 +65,7 @@
 4. **Formato de petición**: URL con parámetros
 5. **Formato de respuesta**: Imagen (PNG, JPG), datos (GML, GeoJSON), XML
 
-## 4.3 Web Map Service (WMS)
+## 5.3 Web Map Service (WMS)
 
 ### ¿Qué es WMS?
 
@@ -221,7 +221,7 @@ http://localhost:8080/geoserver/wms?
 
 **⚠️ IMPORTANTE**: En WMS 1.3.0 con EPSG:4326, el BBOX es `miny,minx,maxy,maxx` (lat,lon) en lugar de `minx,miny,maxx,maxy` (lon,lat).
 
-## 4.4 Web Feature Service (WFS)
+## 5.4 Web Feature Service (WFS)
 
 ### ¿Qué es WFS?
 
@@ -370,7 +370,7 @@ http://localhost:8080/geoserver/wfs?
 }
 ```
 
-#### 4. GetPropertyValue
+#### 5. GetPropertyValue
 
 Obtiene solo valores de propiedades específicas (sin geometría).
 
@@ -435,7 +435,7 @@ cql_filter=INTERSECTS(geom, POINT(-74.0 4.0))
 cql_filter=poblacion > 500000 AND nombre LIKE 'C%'
 ```
 
-## 4.5 Diferencias entre WMS y WFS
+## 5.5 Diferencias entre WMS y WFS
 
 | Aspecto | WMS | WFS |
 |---------|-----|-----|
@@ -468,7 +468,7 @@ cql_filter=poblacion > 500000 AND nombre LIKE 'C%'
 - WMS como capa base (visualización rápida)
 - WFS para capas de interés (consultas y análisis)
 
-## 4.6 Otros Servicios OGC
+## 5.6 Otros Servicios OGC
 
 ### WCS (Web Coverage Service)
 
@@ -524,7 +524,7 @@ Ejecuta procesos geoespaciales en el servidor.
 - DescribeProcess
 - Execute
 
-## 4.7 Pruebas Prácticas con GeoServer
+## 5.7 Pruebas Prácticas con GeoServer
 
 ### Usando el Navegador
 
@@ -587,7 +587,7 @@ curl "http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities"
 curl "http://localhost:8080/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=sf:states&outputFormat=application/json&count=1"
 ```
 
-## 4.8 Mejores Prácticas
+## 5.8 Mejores Prácticas
 
 ### Rendimiento
 
@@ -648,6 +648,6 @@ En este capítulo has aprendido:
 
 ---
 
-**Capítulo anterior**: [Capítulo 3: Instalación y Configuración de GeoServer](./capitulo-03-geoserver.md)
+**Capítulo anterior**: [Capítulo 4: Instalación y Configuración de GeoServer](./capitulo-04-geoserver.md)
 
-**Próximo capítulo**: [Capítulo 5: Estándares para Información Geográfica](./capitulo-05-estandares-geograficos.md)
+**Próximo capítulo**: [Capítulo 6: Estándares para Información Geográfica](./capitulo-06-estandares-geograficos.md)

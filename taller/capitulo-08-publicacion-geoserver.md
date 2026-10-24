@@ -1,4 +1,4 @@
-# Capítulo 7: Publicación de Capas en GeoServer
+# Capítulo 8: Publicación de Capas en GeoServer
 
 ## Objetivos del Capítulo
 
@@ -11,7 +11,7 @@
 - Probar servicios WMS y WFS
 - Optimizar el rendimiento
 
-## 7.1 Arquitectura de Publicación en GeoServer
+## 8.1 Arquitectura de Publicación en GeoServer
 
 ### Jerarquía de Conceptos
 
@@ -32,7 +32,7 @@ Workspace (Espacio de Trabajo)
 | **Style** | Representación visual de la capa | `departamentos_style` |
 | **Layer Group** | Agrupación de múltiples capas | `colombia_admin` |
 
-## 7.2 Crear Espacio de Trabajo
+## 8.2 Crear Espacio de Trabajo
 
 ### Paso 1: Acceder a Workspaces
 
@@ -67,7 +67,7 @@ http://localhost:8080/geoserver/taller/wms
 http://localhost:8080/geoserver/taller/wfs
 ```
 
-## 7.3 Crear Almacén de Datos (Store)
+## 8.3 Crear Almacén de Datos (Store)
 
 ### Tipos de Stores
 
@@ -145,7 +145,7 @@ Verifica:
 - El driver PostgreSQL JDBC está en `geoserver/WEB-INF/lib/`
 - Reinicia GeoServer
 
-## 7.4 Publicar Capas
+## 8.4 Publicar Capas
 
 ### Método 1: Desde el Store
 
@@ -239,7 +239,7 @@ Repite el proceso para `municipios`:
    - Calcula bounding boxes
 5. **Save**
 
-## 7.5 Aplicar Estilos SLD
+## 8.5 Aplicar Estilos SLD
 
 ### Subir Archivos SLD
 
@@ -342,7 +342,7 @@ Si tuvieras una capa de ciudades:
 </StyledLayerDescriptor>
 ```
 
-## 7.6 Vista Previa de Capas
+## 8.6 Vista Previa de Capas
 
 ### Layer Preview
 
@@ -377,7 +377,7 @@ Deberías ver:
    - `dpto_ccdgo`
    - `dpto_cnmbr`
 
-## 7.7 Probar Servicios
+## 8.7 Probar Servicios
 
 ### URLs de Servicios
 
@@ -457,7 +457,7 @@ curl "http://localhost:8080/geoserver/taller/wms?service=WMS&version=1.1.0&reque
 curl "http://localhost:8080/geoserver/taller/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=taller:departamentos&outputFormat=application/json&count=1" | jq
 ```
 
-## 7.8 Configurar Metadatos
+## 8.8 Configurar Metadatos
 
 ### Metadatos de Capa
 
@@ -485,7 +485,7 @@ Uso educativo y no comercial. Para uso comercial contactar al IGAC.
 2. **Settings** → **Contact Information**
 3. Agrega información de contacto
 
-## 7.9 Crear Grupo de Capas
+## 8.9 Crear Grupo de Capas
 
 ### ¿Para Qué?
 
@@ -537,7 +537,7 @@ http://localhost:8080/geoserver/taller/wms?
   format=image/png
 ```
 
-## 7.10 Optimización de Rendimiento
+## 8.10 Optimización de Rendimiento
 
 ### Caché de Teselas (GeoWebCache)
 
@@ -599,7 +599,7 @@ En el store `taller_postgis`:
 3. **Number of decimals**: `6-8`
 4. **Enable global services**: Según necesidad
 
-## 7.11 Seguridad Básica
+## 8.11 Seguridad Básica
 
 ### Restringir Acceso a Capas
 
@@ -626,6 +626,51 @@ En el store `taller_postgis`:
 ### Probar Acceso
 
 Sin autenticación, algunos servicios devolverán error 403.
+
+## 8.12 Laboratorio: tu propio WMTS con GeoWebCache
+
+En el **Capítulo 2** consumiste teselas de servicios ajenos y viste la estructura `z/x/y`. Ahora publicas **tu propio WMTS** sobre la capa que ya serviste, usando **GeoWebCache (GWC)**, integrado en GeoServer.
+
+### Paso 1 — Habilitar y sembrar el caché
+
+Si no lo hiciste en §8.10: habilita el *Tile Caching* de `taller:departamentos` (gridset `EPSG:4326`, formato `image/png`) y lanza un *Seed* de zoom 0 a 10.
+
+### Paso 2 — GetCapabilities del WMTS
+
+```
+http://localhost:8080/geoserver/gwc/service/wmts?REQUEST=GetCapabilities
+```
+
+Busca tu capa y el `TileMatrixSet` `EPSG:4326`: ahí está la pirámide (niveles `EPSG:4326:0`, `EPSG:4326:1`, …).
+
+### Paso 3 — Pedir una tesela (GetTile)
+
+```
+http://localhost:8080/geoserver/gwc/service/wmts?
+  SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile
+  &LAYER=taller:departamentos&STYLE=
+  &TILEMATRIXSET=EPSG:4326&TILEMATRIX=EPSG:4326:5
+  &TILEROW=10&TILECOL=18
+  &FORMAT=image/png
+```
+
+Cambia `TILEMATRIX` (zoom), `TILEROW` y `TILECOL` y observa qué tesela recibes. Es la versión OGC de los `z/x/y` del Capítulo 2: `TILEMATRIX`↔z, `TILEROW`↔y, `TILECOL`↔x.
+
+> **Atajo visual:** la página de demostración de GWC lista tus capas y te deja navegar las teselas:
+> `http://localhost:8080/geoserver/gwc/demo`
+
+### Paso 4 — Comparar WMS vs WMTS
+
+- **WMS `GetMap`**: el servidor **renderiza al vuelo** cada petición (flexible: cualquier bbox y tamaño).
+- **WMTS `GetTile`**: entrega una **tesela ya generada** (rápida y cacheable, pero limitada a la pirámide).
+
+Pide el mismo sector por WMS (§8.7) y por WMTS y nota la diferencia de velocidad al repetir la vista: la segunda vez el WMTS responde desde el caché.
+
+### Ejercicio
+
+Amplía tu ficha `operaciones-ogc.md` (la del Capítulo 2) con una sección **"WMTS propio"**: la URL de `GetCapabilities` de tu GWC, una `GetTile` que funcione (indicando `TileMatrix/TileRow/TileCol`) y una frase sobre cuándo preferirías WMTS frente a WMS.
+
+---
 
 ## Resumen
 
@@ -666,6 +711,6 @@ En este capítulo has aprendido:
 
 ---
 
-**Capítulo anterior**: [Capítulo 6: Carga de Datos a PostgreSQL](./capitulo-06-carga-datos-postgresql.md)
+**Capítulo anterior**: [Capítulo 7: Carga de Datos a PostgreSQL](./capitulo-07-carga-datos-postgresql.md)
 
-**Próximo capítulo**: [Capítulo 8: Aplicación Web con Leaflet](./capitulo-08-aplicacion-leaflet.md)
+**Próximo capítulo**: [Capítulo 9: Aplicación Web con Leaflet](./capitulo-09-aplicacion-leaflet.md)

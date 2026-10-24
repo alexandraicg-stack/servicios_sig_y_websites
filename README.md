@@ -19,16 +19,17 @@ Aprender a configurar, administrar y consumir servicios web geográficos utiliza
 
 ## Curso
 
-El curso está organizado en 8 capítulos:
+El curso está organizado en 9 capítulos:
 
 1. [Introducción a Git](./taller/capitulo-01-git.md)
-2. [Instalación de PostgreSQL y PostGIS con Docker](./taller/capitulo-02-postgresql-postgis.md)
-3. [Instalación y Configuración de GeoServer con Docker](./taller/capitulo-03-geoserver.md)
-4. [Servicios Web Geográficos (WMS, WFS)](./taller/capitulo-04-servicios-web-geograficos.md)
-5. [Estándares para Información Geográfica (GeoJSON, SLD)](./taller/capitulo-05-estandares-geograficos.md)
-6. [Carga de Datos a PostgreSQL](./taller/capitulo-06-carga-datos-postgresql.md)
-7. [Publicación de Capas en GeoServer](./taller/capitulo-07-publicacion-geoserver.md)
-8. [Aplicación Web con Leaflet](./taller/capitulo-08-aplicacion-leaflet.md)
+2. [Explorar y consumir servicios OGC existentes](./taller/capitulo-02-consumir-servicios-ogc.md)
+3. [Instalación de PostgreSQL y PostGIS con Docker](./taller/capitulo-03-postgresql-postgis.md)
+4. [Instalación y Configuración de GeoServer con Docker](./taller/capitulo-04-geoserver.md)
+5. [Servicios Web Geográficos (WMS, WFS)](./taller/capitulo-05-servicios-web-geograficos.md)
+6. [Estándares para Información Geográfica (GeoJSON, SLD)](./taller/capitulo-06-estandares-geograficos.md)
+7. [Carga de Datos a PostgreSQL](./taller/capitulo-07-carga-datos-postgresql.md)
+8. [Publicación de Capas en GeoServer](./taller/capitulo-08-publicacion-geoserver.md)
+9. [Aplicación Web con Leaflet](./taller/capitulo-09-aplicacion-leaflet.md)
 
 **Comienza aquí**: [Índice del Curso](./taller/README.md)
 

@@ -1,4 +1,4 @@
-# Capítulo 5: Estándares para Información Geográfica
+# Capítulo 6: Estándares para Información Geográfica
 
 ## Objetivos del Capítulo
 
@@ -9,7 +9,7 @@
 - Conocer otros formatos geográficos relevantes
 - Aplicar estilos a capas en GeoServer
 
-## 5.1 GeoJSON
+## 6.1 GeoJSON
 
 ### ¿Qué es GeoJSON?
 
@@ -345,7 +345,7 @@ ogr2ogr -f GeoJSON departamentos.geojson PG:"host=localhost dbname=taller_gis us
 ❌ No soporta topología
 ❌ Menos eficiente que formatos binarios
 
-## 5.2 Styled Layer Descriptor (SLD)
+## 6.2 Styled Layer Descriptor (SLD)
 
 ### ¿Qué es SLD?
 
@@ -756,7 +756,7 @@ Cualquier editor XML funciona:
 - Notepad++
 - Sublime Text
 
-## 5.3 Otros Formatos Geográficos
+## 6.3 Otros Formatos Geográficos
 
 ### KML (Keyhole Markup Language)
 
@@ -857,6 +857,6 @@ En este capítulo has aprendido:
 
 ---
 
-**Capítulo anterior**: [Capítulo 4: Servicios Web Geográficos](./capitulo-04-servicios-web-geograficos.md)
+**Capítulo anterior**: [Capítulo 5: Servicios Web Geográficos](./capitulo-05-servicios-web-geograficos.md)
 
-**Próximo capítulo**: [Capítulo 6: Carga de Datos a PostgreSQL](./capitulo-06-carga-datos-postgresql.md)
+**Próximo capítulo**: [Capítulo 7: Carga de Datos a PostgreSQL](./capitulo-07-carga-datos-postgresql.md)
