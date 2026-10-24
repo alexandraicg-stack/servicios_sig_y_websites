@@ -8,6 +8,8 @@ Este repositorio contiene:
 
 - **Datos geográficos** de Colombia (departamentos y municipios)
 - **Curso completo** por capítulos en formato Markdown
+- **Nivelación (Módulo 0)** con rutas A/B/C para preparar el entorno
+- **Scripts** de descarga de datos y verificación de fuentes (Python, Bash, PowerShell, cmd)
 - **Aplicación web** de ejemplo con Leaflet.js
 - **Archivos SLD** para estilos de capas
 
@@ -20,8 +22,8 @@ Aprender a configurar, administrar y consumir servicios web geográficos utiliza
 El curso está organizado en 8 capítulos:
 
 1. [Introducción a Git](./taller/capitulo-01-git.md)
-2. [Instalación de PostgreSQL y PostGIS](./taller/capitulo-02-postgresql-postgis.md)
-3. [Instalación y Configuración de GeoServer](./taller/capitulo-03-geoserver.md)
+2. [Instalación de PostgreSQL y PostGIS con Docker](./taller/capitulo-02-postgresql-postgis.md)
+3. [Instalación y Configuración de GeoServer con Docker](./taller/capitulo-03-geoserver.md)
 4. [Servicios Web Geográficos (WMS, WFS)](./taller/capitulo-04-servicios-web-geograficos.md)
 5. [Estándares para Información Geográfica (GeoJSON, SLD)](./taller/capitulo-05-estandares-geograficos.md)
 6. [Carga de Datos a PostgreSQL](./taller/capitulo-06-carga-datos-postgresql.md)
@@ -29,6 +31,21 @@ El curso está organizado en 8 capítulos:
 8. [Aplicación Web con Leaflet](./taller/capitulo-08-aplicacion-leaflet.md)
 
 **Comienza aquí**: [Índice del Curso](./taller/README.md)
+
+## Nivelación (Módulo 0)
+
+Antes de los talleres, el material de [`nivelacion/`](./nivelacion/README.md) deja tu entorno listo y nivela el punto de partida:
+
+- Tres rutas obligatorias, en orden: **A — Base firme** → **B — Puente** → **C — Acelerada**.
+- [Checklist de entorno](./nivelacion/00_checklist_entorno.md) con QGIS, Git, Docker y un repositorio propio.
+- Git básico como requisito: crear el repo, `git init`, ramas y `push`/`pull`.
+
+## Scripts
+
+La carpeta [`scripts/`](./scripts/README.md) trae utilidades que también sirven como ejemplos de código:
+
+- `descargar_boyaca.py` — descarga datos de Boyacá desde servicios REST (Python, solo biblioteca estándar).
+- `verificar_fuentes.sh` / `.ps1` / `.bat` — chequeo en vivo de ~19 fuentes geoespaciales en Bash, PowerShell y cmd.
 
 ## Datos
 
@@ -62,11 +79,21 @@ git clone https://github.com/usuario/servicios_sig_y_websites.git
 cd servicios_sig_y_websites
 ```
 
-### 2. Seguir el Curso
+### 2. Levantar los servicios con Docker
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+- PostGIS → `localhost:5432` (base `taller_gis`, usuario/clave `postgres`/`postgres`)
+- GeoServer → [http://localhost:8080/geoserver](http://localhost:8080/geoserver) (`admin`/`geoserver`)
+
+### 3. Seguir el Curso
 
 Lee el [Índice del Curso](./taller/README.md) y sigue los capítulos en orden.
 
-### 3. Ejecutar la Aplicación
+### 4. Ejecutar la Aplicación
 
 ```bash
 cd webapp
@@ -77,11 +104,11 @@ Abre [http://localhost:8000](http://localhost:8000)
 
 ## Requisitos
 
+- **Docker Desktop** - levanta PostGIS y GeoServer con un solo comando (no hace falta instalar Java, PostgreSQL ni GeoServer por separado)
 - **Git** - Control de versiones
-- **PostgreSQL 16+** con **PostGIS 3.4+**
-- **GeoServer 2.24+**
-- **Java 11 o 17** (para GeoServer)
 - **Navegador web moderno**
+
+> Los servicios (PostgreSQL 16 + PostGIS 3.4 y GeoServer 2.25) vienen en los contenedores definidos en [`docker-compose.yml`](./docker-compose.yml). La instalación nativa queda como anexo opcional en los capítulos 2 y 3.
 
 ## Tecnologías Utilizadas
 
