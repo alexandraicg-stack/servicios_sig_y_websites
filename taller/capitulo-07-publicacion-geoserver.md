@@ -99,12 +99,16 @@ http://localhost:8080/geoserver/taller/wfs
 
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
-| **host** | `localhost` | Servidor PostgreSQL |
+| **host** | `postgis` | Nombre del servicio PostGIS en Docker |
 | **port** | `5432` | Puerto PostgreSQL |
 | **database** | `taller_gis` | Nombre de la base de datos |
 | **schema** | `public` | Schema de PostgreSQL |
 | **user** | `postgres` | Usuario de PostgreSQL |
-| **passwd** | `tu_contraseña` | Contraseña del usuario |
+| **passwd** | `postgres` | Contraseña del usuario |
+
+> **⚠️ Importante: el host es `postgis`, no `localhost`.** GeoServer y PostGIS corren en contenedores dentro de la misma red de Docker Compose y se localizan entre sí por su **nombre de servicio** (el definido en `docker-compose.yml`). Si pusieras `localhost`, GeoServer buscaría la base de datos *dentro de su propio contenedor* y la conexión fallaría.
+>
+> **Si usaste la instalación nativa** (Anexos de los capítulos 2 y 3, con PostgreSQL y GeoServer en el mismo equipo), entonces el host del Store **sí** es `localhost`.
 
 #### Opciones Avanzadas
 
@@ -128,11 +132,12 @@ http://localhost:8080/geoserver/taller/wfs
 
 #### Error: Could not connect to database
 
-Verifica:
-- PostgreSQL está ejecutándose
-- Usuario y contraseña correctos
-- Base de datos `taller_gis` existe
-- Firewall permite conexión al puerto 5432
+Con Docker, verifica:
+- El contenedor de PostGIS está arriba: `docker compose ps` (el servicio `postgis` en estado *running/healthy*).
+- El **host** del Store es `postgis` (no `localhost`) y ambos contenedores se levantaron con el mismo `docker compose up`.
+- Usuario/contraseña correctos (`postgres`/`postgres`) y base de datos `taller_gis`.
+
+En instalación nativa, verifica en cambio: que PostgreSQL esté ejecutándose, el host `localhost`, las credenciales, que la base `taller_gis` exista y que el firewall permita el puerto 5432.
 
 #### Error: No suitable driver
 

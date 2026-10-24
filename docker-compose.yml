@@ -1,0 +1,51 @@
+# Stack del curso — PostgreSQL/PostGIS + GeoServer con Docker.
+#
+# Uso:
+#   docker compose up -d        levantar los servicios en segundo plano
+#   docker compose ps           ver su estado
+#   docker compose logs -f      ver registros en vivo
+#   docker compose down         detener (los datos se conservan en los volúmenes)
+#
+# Servicios y accesos:
+#   PostgreSQL/PostGIS -> localhost:5432   (db: taller_gis, user/pass: postgres/postgres)
+#   GeoServer          -> http://localhost:8080/geoserver   (admin/geoserver)
+#
+# Nota: GeoServer y PostGIS comparten la red de Docker Compose. Desde GeoServer,
+# el host de la base de datos es el NOMBRE DEL SERVICIO -> "postgis" (no "localhost").
+
+services:
+  postgis:
+    image: postgis/postgis:16-3.4
+    container_name: curso_postgis
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taller_gis          # se crea con PostGIS ya habilitado
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./data:/data:ro               # datos del repo accesibles dentro del contenedor (p. ej. para shp2pgsql)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d taller_gis"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  geoserver:
+    image: docker.osgeo.org/geoserver:2.25.3
+    container_name: curso_geoserver
+    environment:
+      GEOSERVER_ADMIN_USER: admin
+      GEOSERVER_ADMIN_PASSWORD: geoserver
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgis:
+        condition: service_healthy
+    volumes:
+      - geoserver_data:/opt/geoserver_data
+
+volumes:
+  pgdata:
+  geoserver_data:

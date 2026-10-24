@@ -3,10 +3,12 @@
 ## Objetivos del Capítulo
 
 - Comprender qué son PostgreSQL y PostGIS
-- Instalar PostgreSQL en Windows
-- Instalar la extensión PostGIS
-- Crear una base de datos espacial
+- Levantar PostgreSQL + PostGIS con **Docker** (vía principal del curso)
+- Verificar la base de datos espacial `taller_gis`
+- Administrarla con pgAdmin y `psql`
 - Realizar consultas espaciales básicas
+
+> Este capítulo usa **Docker** como método principal. Si no puedes usar Docker en tu equipo, al final encontrarás el **Anexo A — Instalación nativa (opcional)**.
 
 ## 2.1 ¿Qué es PostgreSQL?
 
@@ -48,255 +50,77 @@
 | Topología | Relaciones topológicas complejas |
 | 3D | Soporte para geometrías tridimensionales |
 
-## 2.3 Instalación de PostgreSQL en Windows
+## 2.3 Levantar PostgreSQL + PostGIS con Docker
 
-### Paso 1: Descargar PostgreSQL
+En lugar de instalar PostgreSQL y PostGIS directamente en el sistema operativo, el curso usa **Docker**: una imagen oficial ya trae PostgreSQL y PostGIS listos y la base de datos del curso se crea sola. Así todos trabajamos con la misma versión y evitamos problemas de instalación.
 
-1. Visita [https://www.postgresql.org/download/windows/](https://www.postgresql.org/download/windows/)
-2. Haz clic en **Download the installer**
-3. Serás redirigido a EnterpriseDB
-4. Descarga la versión más reciente (recomendado: PostgreSQL 16.x)
-5. Selecciona la arquitectura de tu sistema (64-bit)
+### Paso 1: Requisito — Docker Desktop
 
-**Enlace directo**: [https://www.enterprisedb.com/downloads/postgres-postgresql-downloads](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+Instala **Docker Desktop** desde [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/) y asegúrate de que esté corriendo. Verifica:
 
-### Paso 2: Ejecutar el Instalador
-
-1. Ejecuta el archivo descargado (`postgresql-16.x-windows-x64.exe`)
-2. Si aparece el Control de Cuentas de Usuario (UAC), haz clic en **Sí**
-
-### Paso 3: Proceso de Instalación
-
-#### Pantalla de Bienvenida
-- Haz clic en **Next**
-
-#### Directorio de Instalación
-- Por defecto: `C:\Program Files\PostgreSQL\16`
-- Puedes dejarlo así o cambiarlo
-- Haz clic en **Next**
-
-#### Selección de Componentes
-Asegúrate de tener seleccionados:
-- - **PostgreSQL Server** (servidor de base de datos)
-- - **pgAdmin 4** (herramienta de administración gráfica)
-- - **Stack Builder** (para instalar extensiones como PostGIS)
-- - **Command Line Tools** (herramientas de línea de comandos)
-
-Haz clic en **Next**
-
-#### Directorio de Datos
-- Por defecto: `C:\Program Files\PostgreSQL\16\data`
-- Deja el valor por defecto
-- Haz clic en **Next**
-
-#### Contraseña del Superusuario
-- Establece una contraseña para el usuario `postgres`
-- **⚠️ IMPORTANTE**: Recuerda esta contraseña
-- Recomendación: Usa una contraseña fuerte pero memorable
-- Ejemplo: `postgres123` (solo para desarrollo local)
-- Haz clic en **Next**
-
-#### Puerto
-- Por defecto: `5432`
-- Deja el valor por defecto (a menos que esté ocupado)
-- Haz clic en **Next**
-
-#### Configuración Regional (Locale)
-- Selecciona tu configuración regional o deja **Default locale**
-- Haz clic en **Next**
-
-#### Resumen
-- Revisa la configuración
-- Haz clic en **Next**
-
-#### Instalación
-- Haz clic en **Next** para comenzar
-- Espera a que se complete la instalación (puede tardar varios minutos)
-
-#### Stack Builder
-- Al finalizar, te preguntará si quieres ejecutar **Stack Builder**
-- - **Marca la casilla** (lo usaremos para instalar PostGIS)
-- Haz clic en **Finish**
-
-### Paso 4: Verificar la Instalación
-
-#### Verificar el Servicio
-
-1. Presiona `Win + R`
-2. Escribe `services.msc` y presiona Enter
-3. Busca **postgresql-x64-16**
-4. Verifica que el estado sea **Running** (Ejecutándose)
-
-#### Verificar desde CMD
-
-1. Abre **CMD** o **PowerShell**
-2. Ejecuta:
-
-```cmd
-psql --version
+```bash
+docker --version
+docker compose version
 ```
 
-Deberías ver:
-```
-psql (PostgreSQL) 16.x
-```
+### Paso 2: Levantar el servicio
 
-#### Conectarse a PostgreSQL
+Desde la **raíz del repositorio** (donde está `docker-compose.yml`):
 
-Desde CMD:
-```cmd
-psql -U postgres
+```bash
+docker compose up -d        # descarga la imagen y levanta el contenedor
+docker compose ps           # verifica que "curso_postgis" esté "running"/"healthy"
+docker compose logs -f postgis   # (opcional) ver registros en vivo; Ctrl+C para salir
 ```
 
-Te pedirá la contraseña. Introdúcela y deberías ver:
-```
-postgres=#
-```
+El servicio `postgis` usa la imagen `postgis/postgis:16-3.4` y, al arrancar por primera vez, **crea automáticamente**:
 
-Para salir:
-```sql
-\q
-```
+- la base de datos **`taller_gis`**,
+- con la **extensión PostGIS ya habilitada**,
+- usuario y contraseña **`postgres` / `postgres`**,
+- publicada en **`localhost:5432`**.
 
-## 2.4 Instalación de PostGIS
+> No hace falta instalar PostGIS aparte ni usar Stack Builder: la imagen ya lo incluye.
 
-### Opción 1: Usando Stack Builder (Recomendado)
+### Paso 3: Verificar PostgreSQL y PostGIS
 
-#### Paso 1: Abrir Stack Builder
+Ejecuta `psql` **dentro del contenedor** con `docker exec`:
 
-Si no se abrió automáticamente:
-1. Busca **Stack Builder** en el menú de inicio
-2. Ejecútalo
-3. Selecciona tu instalación de PostgreSQL (PostgreSQL 16 on port 5432)
-4. Haz clic en **Next**
-
-#### Paso 2: Seleccionar PostGIS
-
-1. Expande **Spatial Extensions**
-2. Marca - **PostGIS x.x Bundle for PostgreSQL 16**
-3. Haz clic en **Next**
-
-#### Paso 3: Descargar e Instalar
-
-1. Selecciona el directorio de descarga
-2. Haz clic en **Next** para descargar
-3. Una vez descargado, haz clic en **Next** para instalar
-4. Sigue las instrucciones del instalador de PostGIS:
-   - Acepta la licencia
-   - Deja las opciones por defecto
-   - Haz clic en **Next** hasta finalizar
-
-### Opción 2: Descarga Directa
-
-1. Ve a [https://postgis.net/windows_downloads/](https://postgis.net/windows_downloads/)
-2. Descarga el instalador correspondiente a tu versión de PostgreSQL
-3. Ejecuta el instalador y sigue las instrucciones
-
-### Verificar la Instalación de PostGIS
-
-1. Conéctate a PostgreSQL:
-```cmd
-psql -U postgres
+```bash
+docker exec -it curso_postgis psql -U postgres -d taller_gis -c "SELECT version();"
+docker exec -it curso_postgis psql -U postgres -d taller_gis -c "SELECT postgis_version();"
 ```
 
-2. Crea una base de datos de prueba:
-```sql
-CREATE DATABASE test_postgis;
+Deberías ver la versión de PostgreSQL 16 y algo como `3.4 USE_GEOS=1 USE_PROJ=1 USE_STATS=1`.
+
+### Paso 4: Detener y continuar
+
+```bash
+docker compose down     # detiene y elimina los contenedores
+docker compose up -d    # los vuelve a levantar
 ```
 
-3. Conéctate a la base de datos:
-```sql
-\c test_postgis
+Los datos **se conservan** en el volumen `pgdata` entre reinicios. Para borrar todo y empezar de cero: `docker compose down -v` (elimina también los volúmenes).
+
+## 2.5 La Base de Datos del Curso
+
+Con Docker **no tienes que crear la base**: el contenedor ya levantó `taller_gis` con PostGIS habilitado. Esta sección es para **verificarla** y, si lo necesitas, crear bases adicionales.
+
+### Paso 1: Verificar la base y la extensión
+
+Abre una sesión `psql` dentro del contenedor:
+
+```bash
+docker exec -it curso_postgis psql -U postgres -d taller_gis
 ```
 
-4. Activa la extensión PostGIS:
-```sql
-CREATE EXTENSION postgis;
-```
-
-5. Verifica la versión:
-```sql
-SELECT PostGIS_version();
-```
-
-Deberías ver algo como:
-```
-3.4 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
-```
-
-6. Verifica las funciones disponibles:
-```sql
-SELECT count(*) FROM pg_proc WHERE proname LIKE 'st_%';
-```
-
-Deberías ver varios cientos de funciones espaciales.
-
-7. Sal de psql:
-```sql
-\q
-```
-
-## 2.5 Crear la Base de Datos para el Curso
-
-### Paso 1: Crear la Base de Datos
-
-Abre **pgAdmin 4** o usa la línea de comandos:
-
-#### Usando pgAdmin 4
-
-1. Abre **pgAdmin 4** desde el menú de inicio
-2. Ingresa la contraseña maestra (la que configuraste)
-3. Expande **Servers** → **PostgreSQL 16**
-4. Click derecho en **Databases** → **Create** → **Database**
-5. Nombre: `taller_gis`
-6. Owner: `postgres`
-7. Haz clic en **Save**
-
-#### Usando la Línea de Comandos
-
-```cmd
-psql -U postgres
-```
+Dentro de `psql`:
 
 ```sql
-CREATE DATABASE taller_gis
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'Spanish_Colombia.1252'
-    LC_CTYPE = 'Spanish_Colombia.1252'
-    TEMPLATE = template0;
-```
-
-### Paso 2: Activar PostGIS
-
-Conéctate a la base de datos:
-```sql
-\c taller_gis
-```
-
-Activa las extensiones necesarias:
-```sql
--- Extensión principal de PostGIS
-CREATE EXTENSION postgis;
-
--- Funciones de topología (opcional)
-CREATE EXTENSION postgis_topology;
-
--- Herramientas adicionales (opcional)
-CREATE EXTENSION fuzzystrmatch;
-CREATE EXTENSION postgis_tiger_geocoder;
-```
-
-### Paso 3: Verificar la Configuración
-
-Verifica que PostGIS esté activo:
-```sql
+-- Confirmar que PostGIS está activo
 SELECT postgis_full_version();
-```
 
-Lista las extensiones instaladas:
-```sql
+-- Listar las extensiones instaladas
 \dx
 ```
 
@@ -307,6 +131,26 @@ List of installed extensions
 ------------+---------+------------+------------------------------
  postgis    | 3.4.x   | public     | PostGIS geometry and geography...
  plpgsql    | 1.0     | pg_catalog | PL/pgSQL procedural language
+```
+
+### Paso 2: (Opcional) Extensiones adicionales
+
+Si tu proyecto las necesita, dentro de `taller_gis`:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis_topology;        -- topología
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;           -- requerida por el geocoder
+CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;  -- geocodificación
+```
+
+### Paso 3: (Opcional) Crear otra base de datos
+
+Si quisieras una base distinta a la del curso:
+
+```sql
+CREATE DATABASE mi_otra_base;
+\c mi_otra_base
+CREATE EXTENSION postgis;
 ```
 
 ## 2.6 Herramientas de Administración
@@ -325,13 +169,20 @@ List of installed extensions
 
 #### Acceso
 
-1. Abre pgAdmin 4
-2. Navega a **Servers** → **PostgreSQL 16** → **Databases** → **taller_gis**
-3. Click en **Query Tool** para ejecutar consultas SQL
+pgAdmin se instala aparte (o se agrega como otro servicio de Docker). Para conectarlo a la base que corre en el contenedor:
+
+1. Abre pgAdmin 4 → click derecho en **Servers** → **Register** → **Server…**
+2. Pestaña **Connection**:
+   - **Host**: `localhost`  ·  **Port**: `5432`
+   - **Maintenance database**: `taller_gis`
+   - **Username**: `postgres`  ·  **Password**: `postgres`
+3. Guarda y navega a **taller_gis** → **Query Tool** para ejecutar SQL.
+
+> Desde la **máquina host** la base está en `localhost:5432` porque el puerto está publicado en `docker-compose.yml`.
 
 ### psql (Command Line)
 
-**psql** es la herramienta de línea de comandos para PostgreSQL:
+**psql** ya viene dentro del contenedor; no necesitas instalarlo. Lo ejecutas con `docker exec`:
 
 #### Comandos Útiles
 
@@ -349,8 +200,8 @@ List of installed extensions
 
 #### Ejemplo de Sesión
 
-```cmd
-psql -U postgres -d taller_gis
+```bash
+docker exec -it curso_postgis psql -U postgres -d taller_gis
 ```
 
 ```sql
@@ -368,6 +219,8 @@ SELECT PostGIS_version();
 ```
 
 ## 2.7 Consultas Espaciales Básicas
+
+> Ejecuta el SQL de esta sección (y las siguientes 2.8 y 2.9) dentro de una sesión `psql` del contenedor: `docker exec -it curso_postgis psql -U postgres -d taller_gis`, o pégalo en el Query Tool de pgAdmin conectado a `localhost:5432`.
 
 ### Crear una Tabla con Geometría
 
@@ -515,18 +368,17 @@ WHERE tablename = 'ciudades';
 En este capítulo has aprendido:
 
 - Qué son PostgreSQL y PostGIS
-- Cómo instalar PostgreSQL en Windows
-- Cómo instalar la extensión PostGIS
-- Crear una base de datos espacial
-- Herramientas de administración (pgAdmin 4, psql)
+- Cómo levantar PostgreSQL + PostGIS con Docker (`docker compose up -d`)
+- Cómo verificar la base `taller_gis` y la extensión PostGIS
+- Herramientas de administración (pgAdmin 4, `psql` vía `docker exec`)
 - Realizar consultas espaciales básicas
 - Trabajar con sistemas de referencia espacial
 - Crear índices espaciales para mejorar rendimiento
 
 ## Ejercicio Práctico
 
-1. Crea la base de datos `taller_gis` si no lo has hecho
-2. Activa la extensión PostGIS
+1. Levanta el stack con `docker compose up -d` y verifica `postgis_version()`
+2. Conéctate a `taller_gis` con `docker exec -it curso_postgis psql -U postgres -d taller_gis`
 3. Crea la tabla `ciudades` con los ejemplos del capítulo
 4. Inserta los datos de las ciudades
 5. Calcula la distancia entre todas las ciudades
@@ -537,9 +389,31 @@ En este capítulo has aprendido:
 
 - PostgreSQL Documentation. (2024). *PostgreSQL 16 Documentation*. https://www.postgresql.org/docs/16/
 - PostGIS Documentation. (2024). *PostGIS 3.4 Manual*. https://postgis.net/docs/
+- PostGIS. (2024). *Imagen oficial `postgis/postgis` en Docker Hub*. https://hub.docker.com/r/postgis/postgis
 - Obe, R., & Hsu, L. (2021). *PostGIS in Action* (3rd ed.). Manning Publications.
 - Ramsey, P. (2024). *Introduction to PostGIS*. http://postgis.net/workshops/postgis-intro/
 - EnterpriseDB. (2024). *PostgreSQL Installer for Windows*. https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+
+---
+
+## Anexo A — Instalación nativa (opcional)
+
+Si **no puedes usar Docker**, puedes instalar PostgreSQL y PostGIS directamente en Windows. Es más frágil y depende de tu equipo; úsalo solo como alternativa.
+
+1. **Descarga PostgreSQL 16** (instalador de EnterpriseDB): https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+2. **Ejecuta el instalador** dejando las opciones por defecto. Puntos clave:
+   - Componentes: PostgreSQL Server, **pgAdmin 4**, **Stack Builder** y Command Line Tools.
+   - Define la contraseña del superusuario `postgres` (recuérdala) y deja el puerto `5432`.
+3. **Instala PostGIS** con **Stack Builder** (se ofrece al terminar): *Spatial Extensions → PostGIS Bundle for PostgreSQL 16* → descargar e instalar.
+   - Alternativa: instaladores en https://postgis.net/windows_downloads/
+4. **Crea la base y habilita PostGIS** (desde `psql -U postgres` o pgAdmin):
+   ```sql
+   CREATE DATABASE taller_gis OWNER postgres ENCODING 'UTF8' TEMPLATE template0;
+   \c taller_gis
+   CREATE EXTENSION postgis;
+   SELECT postgis_version();
+   ```
+5. A partir de aquí, en el resto del capítulo sustituye `docker exec -it curso_postgis psql -U postgres -d taller_gis` por `psql -U postgres -d taller_gis`.
 
 ---
 

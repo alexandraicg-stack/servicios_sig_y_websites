@@ -3,24 +3,26 @@
 ## Objetivos del Capítulo
 
 - Conocer herramientas para cargar datos geográficos
-- Usar shp2pgsql para cargar shapefiles
+- Usar shp2pgsql (dentro del contenedor PostGIS) para cargar shapefiles
 - Usar ogr2ogr para cargar múltiples formatos
-- Cargar los datos del curso a PostgreSQL
+- Cargar los datos del curso al PostGIS que corre en Docker
 - Verificar y consultar los datos cargados
 - Crear índices espaciales
 - Optimizar el rendimiento
+
+> Este capítulo asume que ya levantaste el stack con `docker compose up -d` (Capítulo 2). El contenedor de base de datos se llama **`curso_postgis`**, la base es **`taller_gis`** (usuario/clave `postgres`/`postgres`) y la carpeta `./data` del repositorio está disponible **dentro del contenedor en `/data`**.
 
 ## 6.1 Herramientas de Carga de Datos
 
 ### Herramientas Disponibles
 
-| Herramienta | Formatos | Ventajas | Instalación |
+| Herramienta | Formatos | Ventajas | Dónde se ejecuta (con Docker) |
 |-------------|----------|----------|-------------|
-| **shp2pgsql** | Shapefile | Incluido con PostGIS, rápido | Con PostgreSQL |
-| **ogr2ogr** | 50+ formatos | Muy versátil, conversión | GDAL/OGR |
-| **QGIS DB Manager** | Todos | Interfaz gráfica | QGIS |
-| **pgAdmin** | CSV, texto | GUI integrada | Con PostgreSQL |
-| **psql COPY** | CSV, texto | Rápido para datos tabulares | Con PostgreSQL |
+| **shp2pgsql** | Shapefile | Incluido en la imagen PostGIS, rápido | Dentro del contenedor `curso_postgis` |
+| **ogr2ogr** | 50+ formatos | Muy versátil, conversión | GDAL en el host, o un contenedor GDAL efímero |
+| **QGIS DB Manager** | Todos | Interfaz gráfica | QGIS en el host (conecta a `localhost:5432`) |
+| **pgAdmin** | CSV, texto | GUI integrada | pgAdmin en el host (conecta a `localhost:5432`) |
+| **psql COPY** | CSV, texto | Rápido para datos tabulares | `docker exec … psql` |
 
 ### ¿Cuál Usar?
 
@@ -35,22 +37,21 @@
 
 **shp2pgsql** es una herramienta de línea de comandos que convierte shapefiles a SQL para PostGIS.
 
-### Ubicación
+### Dónde se ejecuta
 
-**Windows**:
-```
-C:\Program Files\PostgreSQL\16\bin\shp2pgsql.exe
-```
+Con Docker **no necesitas instalar nada**: `shp2pgsql` ya viene dentro de la imagen `postgis/postgis`. Los comandos se ejecutan **dentro del contenedor** `curso_postgis`, y los shapefiles del repositorio están montados en `/data`.
 
-**Agregar al PATH** (opcional):
-1. Agregar `C:\Program Files\PostgreSQL\16\bin` al PATH del sistema
-2. Reiniciar CMD/PowerShell
-
-### Sintaxis Básica
+La forma general es ejecutar `shp2pgsql` y canalizarlo a `psql`, todo dentro del contenedor:
 
 ```bash
-shp2pgsql [opciones] <shapefile> <schema>.<tabla> | psql -d <database> -U <usuario>
+docker exec -it curso_postgis bash -c "shp2pgsql [opciones] /data/<shapefile> <schema>.<tabla> | psql -U postgres -d taller_gis"
 ```
+
+> ¿Tu shapefile no está en `./data`? Cópialo al contenedor y apunta a `/tmp`:
+> ```bash
+> docker cp mi_capa.shp curso_postgis:/tmp/
+> docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 /tmp/mi_capa.shp public.mi_capa | psql -U postgres -d taller_gis"
+> ```
 
 ### Opciones Principales
 
@@ -79,31 +80,25 @@ shp2pgsql [opciones] <shapefile> <schema>.<tabla> | psql -d <database> -U <usuar
 ### Ejemplo Básico
 
 ```bash
-# Generar SQL (ver en pantalla)
-shp2pgsql -I -s 4326 departamentos.shp public.departamentos
-
-# Cargar directamente a PostgreSQL
-shp2pgsql -I -s 4326 departamentos.shp public.departamentos | psql -d taller_gis -U postgres
+# Cargar departamentos directamente a PostGIS (dentro del contenedor)
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 /data/departamentos.shp public.departamentos | psql -U postgres -d taller_gis"
 ```
 
 ### Ejemplo con Codificación
 
 ```bash
-# Windows - shapefile con codificación LATIN1
-shp2pgsql -I -s 4326 -W LATIN1 municipios.shp public.municipios | psql -d taller_gis -U postgres
+# Shapefile con codificación LATIN1
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -W LATIN1 /data/municipios.shp public.municipios | psql -U postgres -d taller_gis"
 ```
 
 ### Ejemplo Completo
 
 ```bash
-# Navegar al directorio de datos
-cd C:\Users\TuUsuario\Documents\servicios_sig_y_websites\data
-
-# Cargar departamentos
-shp2pgsql -I -s 4326 -d -W UTF8 departamentos.shp public.departamentos | psql -d taller_gis -U postgres
+# Cargar departamentos (-d: elimina y recrea la tabla; -W UTF8: codificación)
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -d -W UTF8 /data/departamentos.shp public.departamentos | psql -U postgres -d taller_gis"
 
 # Cargar municipios
-shp2pgsql -I -s 4326 -d -W UTF8 municipios.shp public.municipios | psql -d taller_gis -U postgres
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -d -W UTF8 /data/municipios.shp public.municipios | psql -U postgres -d taller_gis"
 ```
 
 ### Verificar el SRID del Shapefile
@@ -128,14 +123,14 @@ Si aparecen caracteres extraños (ñ, á, é):
 
 ```bash
 # Probar con LATIN1
-shp2pgsql -I -s 4326 -W LATIN1 municipios.shp public.municipios | psql -d taller_gis -U postgres
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -W LATIN1 /data/municipios.shp public.municipios | psql -U postgres -d taller_gis"
 ```
 
 #### Tabla ya Existe
 
 ```bash
 # Usar -d para eliminar y recrear
-shp2pgsql -I -s 4326 -d departamentos.shp public.departamentos | psql -d taller_gis -U postgres
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -d /data/departamentos.shp public.departamentos | psql -U postgres -d taller_gis"
 ```
 
 #### Problemas con Geometrías Inválidas
@@ -151,26 +146,29 @@ UPDATE departamentos SET geom = ST_MakeValid(geom) WHERE NOT ST_IsValid(geom);
 
 **ogr2ogr** es parte de GDAL/OGR, una biblioteca para leer y escribir formatos geoespaciales.
 
-### Instalación de GDAL
+### Dos formas de ejecutar ogr2ogr (con Docker)
 
-#### Windows - OSGeo4W
+A diferencia de `shp2pgsql`, **`ogr2ogr` (GDAL) no viene en la imagen de PostGIS**. Tienes dos opciones:
 
-1. Descarga OSGeo4W: [https://trac.osgeo.org/osgeo4w/](https://trac.osgeo.org/osgeo4w/)
-2. Ejecuta el instalador `osgeo4w-setup.exe`
-3. Selecciona **Express Install**
-4. Marca **GDAL**
-5. Completa la instalación
-
-#### Windows - Alternativa
-
-Descarga binarios desde:
-[https://github.com/OSGeo/gdal/releases](https://github.com/OSGeo/gdal/releases)
-
-#### Verificar Instalación
+**(a) GDAL instalado en tu equipo (host).** Si ya tienes GDAL (p. ej. vía QGIS u OSGeo4W), conéctate al puerto publicado `localhost:5432`:
 
 ```bash
-ogr2ogr --version
+ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=taller_gis user=postgres password=postgres" data/municipios.shp -nln municipios -lco GEOMETRY_NAME=geom -lco FID=gid -overwrite -progress
 ```
+
+**(b) Un contenedor GDAL efímero** unido a la red del stack, que se conecta por el nombre de servicio `postgis` (no necesitas instalar nada):
+
+```bash
+# PowerShell / cmd usan %cd% ; en bash usa $PWD
+docker run --rm -v "%cd%/data:/data" --network servicios_sig_y_websites_default ghcr.io/osgeo/gdal:alpine-small-latest \
+  ogr2ogr -f "PostgreSQL" PG:"host=postgis dbname=taller_gis user=postgres password=postgres" /data/municipios.shp -nln municipios -lco GEOMETRY_NAME=geom -overwrite
+```
+
+> El nombre de la red `servicios_sig_y_websites_default` lo asigna Docker Compose a partir del nombre de la carpeta del repositorio; verifícalo con `docker network ls`.
+
+Para verificar tu versión de GDAL (opción a): `ogr2ogr --version`.
+
+En los ejemplos siguientes, ajusta la cadena `PG:"..."` según la forma elegida: `host=localhost` si usas GDAL en el host (añade `password=postgres`), o `host=postgis` si usas el contenedor GDAL efímero.
 
 ### Sintaxis Básica
 
@@ -248,32 +246,22 @@ ogr2ogr -f "PostgreSQL" PG:"dbname=taller_gis user=postgres" datos.gpkg -overwri
 
 ### Preparación
 
-1. Abre **CMD** o **PowerShell**
-2. Navega al directorio del repositorio:
+1. Asegúrate de que el stack esté corriendo: `docker compose ps` (debe verse `curso_postgis`).
+2. Verifica que los shapefiles están en `./data` del repositorio (y, por tanto, en `/data` dentro del contenedor):
 
 ```bash
-cd C:\Users\TuUsuario\Documents\servicios_sig_y_websites\data
+docker exec -it curso_postgis ls /data
 ```
 
-3. Verifica que existen los archivos:
+Deberías ver, entre otros, `departamentos.shp` y `municipios.shp`.
 
-```bash
-dir *.shp
-```
-
-Deberías ver:
-- `departamentos.shp`
-- `municipios.shp`
-
-### Método 1: Usando shp2pgsql
+### Método 1: Usando shp2pgsql (recomendado)
 
 #### Cargar Departamentos
 
 ```bash
-shp2pgsql -I -s 4326 -d -W UTF8 departamentos.shp public.departamentos | psql -d taller_gis -U postgres
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -d -W UTF8 /data/departamentos.shp public.departamentos | psql -U postgres -d taller_gis"
 ```
-
-Se te pedirá la contraseña de PostgreSQL.
 
 **Salida esperada**:
 ```
@@ -294,22 +282,19 @@ CREATE INDEX
 #### Cargar Municipios
 
 ```bash
-shp2pgsql -I -s 4326 -d -W UTF8 municipios.shp public.municipios | psql -d taller_gis -U postgres
+docker exec -it curso_postgis bash -c "shp2pgsql -I -s 4326 -d -W UTF8 /data/municipios.shp public.municipios | psql -U postgres -d taller_gis"
 ```
 
 ### Método 2: Usando ogr2ogr
 
-#### Cargar Departamentos
+Con **GDAL en el host** (conecta al puerto publicado `localhost:5432`):
 
 ```bash
-ogr2ogr -f "PostgreSQL" PG:"dbname=taller_gis user=postgres password=TuPassword" departamentos.shp -nln departamentos -lco GEOMETRY_NAME=geom -lco FID=gid -overwrite -progress
+ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=taller_gis user=postgres password=postgres" data/departamentos.shp -nln departamentos -lco GEOMETRY_NAME=geom -lco FID=gid -overwrite -progress
+ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=taller_gis user=postgres password=postgres" data/municipios.shp -nln municipios -lco GEOMETRY_NAME=geom -lco FID=gid -overwrite -progress
 ```
 
-#### Cargar Municipios
-
-```bash
-ogr2ogr -f "PostgreSQL" PG:"dbname=taller_gis user=postgres password=TuPassword" municipios.shp -nln municipios -lco GEOMETRY_NAME=geom -lco FID=gid -overwrite -progress
-```
+Sin GDAL en el host, usa el **contenedor GDAL efímero** (ver §6.3, forma b) cambiando `host=localhost` por `host=postgis`.
 
 ### Método 3: Usando pgAdmin 4 (GUI)
 
@@ -343,8 +328,10 @@ ogr2ogr -f "PostgreSQL" PG:"dbname=taller_gis user=postgres password=TuPassword"
 ### Conectarse a la Base de Datos
 
 ```bash
-psql -d taller_gis -U postgres
+docker exec -it curso_postgis psql -U postgres -d taller_gis
 ```
+
+Desde ahí puedes ejecutar los comandos `\dt`, `\d` y las consultas SQL de abajo. (También puedes conectarte con pgAdmin o QGIS a `localhost:5432`.)
 
 ### Listar Tablas
 
@@ -610,14 +597,19 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
 ### Exportar a Shapefile
 
+`pgsql2shp` también viene en la imagen de PostGIS; se ejecuta dentro del contenedor y el resultado queda en `/tmp` (luego se copia al host con `docker cp`):
+
 ```bash
-pgsql2shp -f departamentos_export.shp -h localhost -u postgres -P password taller_gis "SELECT * FROM departamentos"
+docker exec -it curso_postgis bash -c "pgsql2shp -f /tmp/departamentos_export.shp -h localhost -u postgres -P postgres taller_gis 'SELECT * FROM departamentos'"
+docker cp curso_postgis:/tmp/departamentos_export.shp ./departamentos_export.shp
 ```
 
 ### Exportar a GeoJSON
 
+Con GDAL en el host (conecta a `localhost:5432`):
+
 ```bash
-ogr2ogr -f GeoJSON departamentos_export.geojson PG:"dbname=taller_gis user=postgres" -sql "SELECT * FROM departamentos"
+ogr2ogr -f GeoJSON departamentos_export.geojson PG:"host=localhost port=5432 dbname=taller_gis user=postgres password=postgres" -sql "SELECT * FROM departamentos"
 ```
 
 ### Exportar usando SQL
@@ -637,8 +629,21 @@ COPY (
         ) AS feature
         FROM (SELECT * FROM departamentos) row
     ) features
-) TO 'C:/temp/departamentos.geojson';
+) TO '/tmp/departamentos.geojson';
 ```
+
+> `COPY ... TO` escribe en el sistema de archivos **del servidor**, es decir, dentro del contenedor. Recupéralo con `docker cp curso_postgis:/tmp/departamentos.geojson ./departamentos.geojson`.
+
+## Nota — Instalación nativa (opcional)
+
+Si instalaste PostgreSQL/PostGIS de forma nativa (Anexo A del Capítulo 2) en lugar de Docker:
+
+- `shp2pgsql`, `pgsql2shp` y `psql` están en `C:\Program Files\PostgreSQL\16\bin` (agrégalo al `PATH`). No uses `docker exec`: ejecuta los comandos directamente y apunta a la ruta local del shapefile. Ejemplo:
+  ```bash
+  shp2pgsql -I -s 4326 -d -W UTF8 data\departamentos.shp public.departamentos | psql -d taller_gis -U postgres
+  ```
+- Para `ogr2ogr`, instala GDAL con **OSGeo4W** ([osgeo4w](https://trac.osgeo.org/osgeo4w/)) y usa `PG:"host=localhost dbname=taller_gis user=postgres password=..."`.
+- El host de conexión es `localhost` en todos los casos (no `postgis`).
 
 ## Resumen
 
