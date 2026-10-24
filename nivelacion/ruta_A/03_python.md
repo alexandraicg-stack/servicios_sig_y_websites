@@ -12,8 +12,9 @@
 ```bash
 python -m venv venv
 # activar:
-source venv/bin/activate        # Git Bash / mac / Linux
+source venv/bin/activate        # Unix: Git Bash / mac / Linux
 .\venv\Scripts\Activate.ps1     # PowerShell (Windows)
+venv\Scripts\activate.bat       # CMD (Windows)
 pip install pandas
 ```
 

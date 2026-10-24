@@ -8,7 +8,7 @@
 
 ```bash
 python -m venv venv
-source venv/bin/activate            # .\venv\Scripts\Activate.ps1 en PowerShell
+source venv/bin/activate            # PowerShell: .\venv\Scripts\Activate.ps1 · CMD: venv\Scripts\activate.bat
 pip install pandas geopandas shapely requests
 pip freeze > requirements.txt       # congela versiones para que otro reproduzca
 ```
