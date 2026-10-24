@@ -47,14 +47,14 @@
 ### Modelo Cliente-Servidor
 
 ```
-┌─────────────┐         HTTP Request          ┌─────────────┐
+┌─────────────┐         HTTP Request            ┌─────────────┐
 │             │ ──────────────────────────────> │             │
 │   Cliente   │                                 │   Servidor  │
 │  (Navegador,│                                 │  GeoServer  │
 │   Leaflet,  │                                 │             │
 │    QGIS)    │ <────────────────────────────── │             │
 │             │         HTTP Response           │             │
-└─────────────┘      (Imagen o datos)          └─────────────┘
+└─────────────┘      (Imagen o datos)           └─────────────┘
 ```
 
 ### Componentes
